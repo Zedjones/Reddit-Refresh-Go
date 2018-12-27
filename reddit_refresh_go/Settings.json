@@ -1,8 +1,8 @@
 {
-    "user_info":  {
+    "userInfo":  {
         "token": "o.cziBUAYWHBzYZhkhtkzfSobTRV2SLsNI"
     },
-    "last_result": {
+    "lastResult": {
         "gamedeals_factorio": "https://www.reddit.com/r/GameDeals/comments/7mvvyl/steam_winter_sale_day_9/",
         "gamedeals_battlefield_1": "https://www.reddit.com/r/GameDeals/comments/8mecdo/playstation_store_battlefield_1_revolution/" 
     },
@@ -14,7 +14,7 @@
     "devices": {
         "huawei_nexus_6p": "ujAoL3MXhg4sjz3yaXuUnY"
     },
-    "program_config": {
+    "programConfig": {
         "interval": 0.1
     }
 }

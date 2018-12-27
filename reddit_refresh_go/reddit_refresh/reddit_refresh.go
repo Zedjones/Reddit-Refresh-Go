@@ -16,11 +16,11 @@ type ProgramConfig struct {
 }
 
 type RRConfig struct {
-	User_info		UserInfo
-	Last_result 	map[string]string 
+	UserInfo		UserInfo
+	LastResult 		map[string]string 
 	Subreddits		map[string][]string
 	Devices			map[string]string
-	Program_config	ProgramConfig
+	ProgramConfig	ProgramConfig
 }
 
 func Add(a int, b int) int {
