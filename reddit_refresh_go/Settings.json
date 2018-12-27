@@ -1,0 +1,20 @@
+{
+    "user_info":  {
+        "token": "o.cziBUAYWHBzYZhkhtkzfSobTRV2SLsNI"
+    },
+    "last_result": {
+        "gamedeals_factorio": "https://www.reddit.com/r/GameDeals/comments/7mvvyl/steam_winter_sale_day_9/",
+        "gamedeals_battlefield_1": "https://www.reddit.com/r/GameDeals/comments/8mecdo/playstation_store_battlefield_1_revolution/" 
+    },
+    "subreddits": {
+        "gamedeals": [
+            "Battlefield 1", "Factorio"
+        ]
+    },
+    "devices": {
+        "huawei_nexus_6p": "ujAoL3MXhg4sjz3yaXuUnY"
+    },
+    "program_config": {
+        "interval": 0.1
+    }
+}
