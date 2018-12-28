@@ -1,6 +1,7 @@
 package reddit_refresh
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +14,11 @@ const PUSHES_URL = "https://api.pushbullet.com/v2/pushes"
 
 type UserInfo struct {
 	Token string
+}
+
+type SubResult struct {
+	Url   string
+	Title string
 }
 
 type ProgramConfig struct {
@@ -61,14 +67,39 @@ func GetDevices(token string) map[string]string {
 	for _, device := range result["devices"].([]interface{}) {
 		var nickname string
 		var iden string
-		device_data := device.(map[string]interface{})
-		if device_data["nickname"] != nil {
-			nickname = device_data["nickname"].(string)
+		deviceData := device.(map[string]interface{})
+		if deviceData["nickname"] != nil {
+			nickname = deviceData["nickname"].(string)
 		} else {
 			continue
 		}
-		iden = device_data["iden"].(string)
+		iden = deviceData["iden"].(string)
 		devices_map[nickname] = iden
 	}
 	return devices_map
+}
+
+func SendPushLink(devices []string, token string, result SubResult) {
+	for _, device := range devices {
+		client := &http.Client{}
+		test_token := "o.fVHr05C1TTUIjLyF54Fn3cFpeWvSpe62"
+		data := make(map[string]string)
+		data["title"] = result.Title
+		data["url"] = result.Url
+		data["type"] = "link"
+		data["device_iden"] = device
+		json, err := json.Marshal(data)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error converting data map in JSON string.")
+			panic(err)
+		}
+		req, err := http.NewRequest("POST", PUSHES_URL, bytes.NewBuffer(json))
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
+			panic(err)
+		}
+		req.Header.Add("Access-Token", test_token)
+		req.Header.Set("Content-Type", "application/json")
+		client.Do(req)
+	}
 }
