@@ -82,7 +82,6 @@ func GetDevices(token string) map[string]string {
 func SendPushLink(devices []string, token string, result SubResult) {
 	for _, device := range devices {
 		client := &http.Client{}
-		test_token := "o.fVHr05C1TTUIjLyF54Fn3cFpeWvSpe62"
 		data := make(map[string]string)
 		data["title"] = result.Title
 		data["url"] = result.Url
@@ -98,7 +97,7 @@ func SendPushLink(devices []string, token string, result SubResult) {
 			fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
 			panic(err)
 		}
-		req.Header.Add("Access-Token", test_token)
+		req.Header.Add("Access-Token", token)
 		req.Header.Set("Content-Type", "application/json")
 		client.Do(req)
 	}
