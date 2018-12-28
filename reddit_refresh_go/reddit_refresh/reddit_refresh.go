@@ -7,10 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const DEVICES_URL = "https://api.pushbullet.com/v2/devices"
 const PUSHES_URL = "https://api.pushbullet.com/v2/pushes"
+const SEARCH_URL = "https://www.reddit.com/%s/search.json?q=%s&sort=new&restrict_sr=on&limit=1"
 
 type UserInfo struct {
 	Token string
@@ -101,4 +103,39 @@ func SendPushLink(devices []string, token string, result SubResult) {
 		req.Header.Set("Content-Type", "application/json")
 		client.Do(req)
 	}
+}
+
+func GetResults(sub string, search string) SubResult {
+	if !strings.Contains(sub, "/r") {
+		sub = fmt.Sprintf("r/%s", sub)
+	}
+	if strings.Contains(search, " ") {
+		search = strings.Replace(search, " ", "+", -1)
+	}
+	searchURL := fmt.Sprintf(SEARCH_URL, sub, search)
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", searchURL, nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
+		panic(err)
+	}
+	req.Header.Set("User-Agent", "reddit-refresh-go-1.0")
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error getting search results.")
+		panic(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var result map[string]interface{}
+	json.Unmarshal(body, &result)
+	results := result["data"].(map[string]interface{})["children"].([]interface{})
+	if len(results) == 0 {
+		fmt.Fprintln(os.Stderr, "Invalid subreddit provided.")
+		return SubResult{}
+	}
+	item := results[0].(map[string]interface{})
+	perma := item["data"].(map[string]interface{})["permalink"].(string)
+	link := fmt.Sprintf("https://www.reddit.com%s", perma)
+	title := item["data"].(map[string]interface{})["title"].(string)
+	return SubResult{link, title}
 }
