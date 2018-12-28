@@ -13,6 +13,6 @@ func main() {
 	fmt.Println(config)
 	devices := reddit_refresh.GetDevices(config.UserInfo.Token)
 	fmt.Println(devices)
-	result := reddit_refresh.GetResults("gamedeals", "Battlefield 1")
+	result := reddit_refresh.GetResult("gamedeals", "Battlefield 1")
 	fmt.Println(result)
 }

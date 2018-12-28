@@ -105,7 +105,7 @@ func SendPushLink(devices []string, token string, result SubResult) {
 	}
 }
 
-func GetResults(sub string, search string) SubResult {
+func GetResult(sub string, search string) SubResult {
 	if !strings.Contains(sub, "/r") {
 		sub = fmt.Sprintf("r/%s", sub)
 	}
