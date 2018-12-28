@@ -47,7 +47,7 @@ func GetConfig(file_name string) RRConfig {
 }
 
 func GetDevices(token string) map[string]string {
-	var devices_map map[string]string
+	var devicesMap map[string]string
 	req, err := http.NewRequest("GET", DEVICES_URL, nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
@@ -63,7 +63,7 @@ func GetDevices(token string) map[string]string {
 	body, _ := ioutil.ReadAll(resp.Body)
 	var result map[string]interface{}
 	json.Unmarshal(body, &result)
-	devices_map = make(map[string]string)
+	devicesMap = make(map[string]string)
 	for _, device := range result["devices"].([]interface{}) {
 		var nickname string
 		var iden string
@@ -74,9 +74,9 @@ func GetDevices(token string) map[string]string {
 			continue
 		}
 		iden = deviceData["iden"].(string)
-		devices_map[nickname] = iden
+		devicesMap[nickname] = iden
 	}
-	return devices_map
+	return devicesMap
 }
 
 func SendPushLink(devices []string, token string, result SubResult) {
