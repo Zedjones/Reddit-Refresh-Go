@@ -81,28 +81,26 @@ func GetDevices(token string) map[string]string {
 	return devicesMap
 }
 
-func SendPushLink(devices []string, token string, result SubResult) {
-	for _, device := range devices {
-		client := &http.Client{}
-		data := make(map[string]string)
-		data["title"] = result.Title
-		data["url"] = result.Url
-		data["type"] = "link"
-		data["device_iden"] = device
-		json, err := json.Marshal(data)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error converting data map in JSON string.")
-			panic(err)
-		}
-		req, err := http.NewRequest("POST", PUSHES_URL, bytes.NewBuffer(json))
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
-			panic(err)
-		}
-		req.Header.Add("Access-Token", token)
-		req.Header.Set("Content-Type", "application/json")
-		client.Do(req)
+func SendPushLink(device string, token string, result SubResult) {
+	client := &http.Client{}
+	data := make(map[string]string)
+	data["title"] = result.Title
+	data["url"] = result.Url
+	data["type"] = "link"
+	data["device_iden"] = device
+	json, err := json.Marshal(data)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error converting data map in JSON string.")
+		panic(err)
 	}
+	req, err := http.NewRequest("POST", PUSHES_URL, bytes.NewBuffer(json))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
+		panic(err)
+	}
+	req.Header.Add("Access-Token", token)
+	req.Header.Set("Content-Type", "application/json")
+	client.Do(req)
 }
 
 func GetResult(sub string, search string) SubResult {
