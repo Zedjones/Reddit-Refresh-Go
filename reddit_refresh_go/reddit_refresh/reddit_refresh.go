@@ -10,23 +10,27 @@ import (
 	"strings"
 )
 
-const DEVICES_URL = "https://api.pushbullet.com/v2/devices"
-const PUSHES_URL = "https://api.pushbullet.com/v2/pushes"
-const SEARCH_URL = "https://www.reddit.com/%s/search.json?q=%s&sort=new&restrict_sr=on&limit=1"
+const devicesURL = "https://api.pushbullet.com/v2/devices"
+const pushesURL = "https://api.pushbullet.com/v2/pushes"
+const searchURL = "https://www.reddit.com/%s/search.json?q=%s&sort=new&restrict_sr=on&limit=1"
 
+//UserInfo hold infos about a user used for pushes
 type UserInfo struct {
 	Token string
 }
 
+//SubResult holds information about a search result
 type SubResult struct {
 	Url   string
 	Title string
 }
 
+//ProgramConfig just holds the refresh interval
 type ProgramConfig struct {
 	Interval float32
 }
 
+//RRConfig holds all the information needs to get and push results
 type RRConfig struct {
 	UserInfo      UserInfo
 	LastResult    map[string]string
@@ -35,6 +39,7 @@ type RRConfig struct {
 	ProgramConfig ProgramConfig
 }
 
+//GetConfig loads a config from a JSON file provided
 func GetConfig(file_name string) RRConfig {
 	content, err := ioutil.ReadFile(file_name)
 	if err != nil {
@@ -48,9 +53,11 @@ func GetConfig(file_name string) RRConfig {
 	return configuration
 }
 
+//GetDevices gets the Pushbullet devices for a user
+//using their API access token
 func GetDevices(token string) map[string]string {
 	var devicesMap map[string]string
-	req, err := http.NewRequest("GET", DEVICES_URL, nil)
+	req, err := http.NewRequest("GET", devicesURL, nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
 		panic(err)
@@ -81,6 +88,8 @@ func GetDevices(token string) map[string]string {
 	return devicesMap
 }
 
+//SendPushLink sends a link as a push to the specified device
+//using the provided API access token
 func SendPushLink(device string, token string, result SubResult) {
 	client := &http.Client{}
 	data := make(map[string]string)
@@ -93,7 +102,7 @@ func SendPushLink(device string, token string, result SubResult) {
 		fmt.Fprintln(os.Stderr, "Error converting data map in JSON string.")
 		panic(err)
 	}
-	req, err := http.NewRequest("POST", PUSHES_URL, bytes.NewBuffer(json))
+	req, err := http.NewRequest("POST", pushesURL, bytes.NewBuffer(json))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Could not construct HTTP request.")
 		panic(err)
@@ -103,6 +112,8 @@ func SendPushLink(device string, token string, result SubResult) {
 	client.Do(req)
 }
 
+//GetResult checks a subreddit for the given search and
+//returns the latest result
 func GetResult(sub string, search string) SubResult {
 	if !strings.Contains(sub, "/r") {
 		sub = fmt.Sprintf("r/%s", sub)
@@ -110,7 +121,7 @@ func GetResult(sub string, search string) SubResult {
 	if strings.Contains(search, " ") {
 		search = strings.Replace(search, " ", "+", -1)
 	}
-	searchURL := fmt.Sprintf(SEARCH_URL, sub, search)
+	searchURL := fmt.Sprintf(searchURL, sub, search)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", searchURL, nil)
 	if err != nil {
