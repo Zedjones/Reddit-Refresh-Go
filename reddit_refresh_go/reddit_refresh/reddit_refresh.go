@@ -139,6 +139,8 @@ func GetResult(sub string, search string) SubResult {
 	json.Unmarshal(body, &result)
 	results := result["data"].(map[string]interface{})["children"].([]interface{})
 	if len(results) == 0 {
+		fmt.Println(sub, search)
+
 		fmt.Fprintln(os.Stderr, "Invalid subreddit provided.")
 		return SubResult{}
 	}
