@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"../reddit_refresh"
+	"github.com/zedjones/Reddit-Refresh-Go/reddit_refresh_go/reddit_refresh"
 )
 
 const SETTINGS_FILE = "../Settings.json"
